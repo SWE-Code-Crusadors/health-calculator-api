@@ -10,6 +10,8 @@ const port = process.env.PORT || 3000
 const majorVersion = 1
 const minorVersion = 3
 
+var riskPoints = 0
+
 // Use Express to publish static HTML, CSS, and JavaScript files that run in the browser. 
 app.use(express.static(__dirname + '/static'))
 app.use(cors({ origin: '*' }))
@@ -32,20 +34,32 @@ app.get('/api/ping', (request, response) => {
 	console.log('Calling "/api/ping"')
 	response.type('text/plain')
 	response.send('ping response')
+	console.log('Current Risk Points:' + riskPoints)
 })
 
-// Add x and y which are both passed in on the URL. 
-app.get('/add-two-integers', (request, response) => {
-	console.log('Calling "/add-two-integers" on the Node.js server.')
+// Calculates risk depending on age 
+app.get('/age', (request, response) => {
+	console.log('Calling "/age" on the Node.js server.')
 	var inputs = url.parse(request.url, true).query
-	let x = parseInt(inputs.x)
-	let y = parseInt(inputs.y)
-	let sum = x + y
-	response.type('text/plain')
-	response.send(sum.toString())
+	let age = parseInt(inputs.age)
+	console.log('Age:' + age)
+
+	if (age < 30){
+		riskPoints = riskPoints + 0
+	}
+	else if (age < 45){
+		riskPoints = riskPoints + 10
+	}
+	else if (age < 60){
+		riskPoints = riskPoints + 20
+	}
+	else {
+		riskPoints = riskPoints + 30
+	}
+	console.log('Current Risk Points:' + riskPoints)
 })
 
-// For calculating BMI using height in feet/inches and weight in pounds.
+// Calculates BMI and then calculates risk associated based on calculation
 app.get('/calculate-bmi', (request, response) => {
 	console.log('Calling "/calculate-bmi" on the Node.js server.')
 	var inputs = url.parse(request.url, true).query
@@ -60,8 +74,72 @@ app.get('/calculate-bmi', (request, response) => {
 	var BMI = 703 * (weight / Math.pow((heightInches+(heightFeet*12)),2))
 	console.log('BMI:' + BMI)
 
-	response.type('text/plain')
-	response.send(BMI.toString)
+	if (BMI < 24.9){
+		riskPoints = riskPoints + 0
+	}
+	else if (BMI > 25 && BMI < 29.9){
+		riskPoints = riskPoints + 30
+	}
+	else if (BMI > 30 && BMI < 34.9){
+		riskPoints = riskPoints + 75
+	}
+	console.log('Current Risk Points:' + riskPoints)
+})
+
+// Calculates risk based on blood pressure
+app.get('/blood-pressure', (request, response) => {
+	console.log('Calling "/blood-pressure" on the Node.js server.')
+	var inputs = url.parse(request.url, true).query
+	let bloodPressure = parseInt(inputs.bp)
+	console.log('Blood Pressure:' + bloodPressure)
+
+	if (bloodPressure < 120) {
+		riskPoints = riskPoints + 0
+	}
+	else if (bloodPressure > 120 && bloodPressure < 129) {
+		riskPoints = riskPoints + 15
+	}
+	else if (bloodPressure > 130 && bloodPressure < 139) {
+		riskPoints = riskPoints + 30
+	}
+	else if (bloodPressure > 140 && bloodPressure < 179) {
+		riskPoints = riskPoints + 75
+	}
+	else {
+		riskPoints = riskPoints + 100
+	}
+	console.log('Current Risk Points:' + riskPoints)
+})
+
+// Calculates risk based on family disease
+app.get('/disease', (request, response) => {
+	console.log('Calling "/disease" on the Node.js server.')
+	var inputs = url.parse(request.url, true).query
+
+	
+
+	console.log('Current Risk Points:' + riskPoints)
+})
+
+// Returns risk category
+app.get('/risk-category', (request, response) => {
+	console.log('Calling "/risk-category" on the Node.js server.')
+	if (riskPoints <= 20) {
+		response.type('text/plain')
+		response.send('Low Risk')
+	}
+	else if (riskPoints <= 50) {
+		response.type('text/plain')
+		response.send('Moderate Risk')
+	}
+	else if (riskPoints <= 75) {
+		response.type('text/plain')
+		response.send('High Risk')
+	}
+	else {
+		response.type('text/plain')
+		response.send('Uninsurable')
+	}
 })
 
 // Test a variety of functions.
