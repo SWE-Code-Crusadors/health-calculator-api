@@ -10,7 +10,7 @@ const port = process.env.PORT || 3000
 const majorVersion = 1
 const minorVersion = 3
 
-var riskPoints = 0
+var riskPoints = 70
 
 // Use Express to publish static HTML, CSS, and JavaScript files that run in the browser. 
 app.use(express.static(__dirname + '/static'))
@@ -116,7 +116,7 @@ app.get('/disease', (request, response) => {
 	console.log('Calling "/disease" on the Node.js server.')
 	var inputs = url.parse(request.url, true).query
 
-	
+
 
 	console.log('Current Risk Points:' + riskPoints)
 })
