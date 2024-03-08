@@ -34,13 +34,6 @@ app.get('/api/ping', (request, response) => {
 	response.send('ping response')
 })
 
-// Return the value of 2 plus 2.
-app.get('/2plus2', (request, response) => {
-	console.log('Calling "/2plus2" on the Node.js server.')
-	response.type('text/plain')
-	response.send('4')
-})
-
 // Add x and y which are both passed in on the URL. 
 app.get('/add-two-integers', (request, response) => {
 	console.log('Calling "/add-two-integers" on the Node.js server.')
@@ -52,7 +45,7 @@ app.get('/add-two-integers', (request, response) => {
 	response.send(sum.toString())
 })
 
-// Template for calculating BMI using height in feet/inches and weight in pounds.
+// For calculating BMI using height in feet/inches and weight in pounds.
 app.get('/calculate-bmi', (request, response) => {
 	console.log('Calling "/calculate-bmi" on the Node.js server.')
 	var inputs = url.parse(request.url, true).query
@@ -63,11 +56,12 @@ app.get('/calculate-bmi', (request, response) => {
 	console.log('Height:' + heightFeet + '\'' + heightInches + '\"')
 	console.log('Weight:' + weight + ' lbs.')
 
-	// Todo: Implement unit conversions and BMI calculations.
-	// Todo: Return BMI instead of Todo message.
+	// Calculate BMI
+	var BMI = 703 * (weight / Math.pow((heightInches+(heightFeet*12)),2))
+	console.log('BMI:' + BMI)
 
 	response.type('text/plain')
-	response.send('Todo: Implement "/calculate-bmi"')
+	response.send(BMI.toString)
 })
 
 // Test a variety of functions.
@@ -95,49 +89,7 @@ app.get('/test', (request, response) => {
 
     // Close the response
     response.end('<h3>The End.</h3>');
-})
-
-// Return Batman as JSON.
-const batMan = {
-	"firstName":"Bruce",
-	"lastName":"Wayne",
-	"preferredName":"Batman",
-	"email":"darkknight@lewisu.edu",
-	"phoneNumber":"800-bat-mann",
-	"city":"Gotham",
-	"state":"NJ",
-	"zip":"07101",
-	"lat":"40.73",
-	"lng":"-74.17",
-	"favoriteHobby":"Flying",
-	"class":"cpsc-24700-001",
-	"room":"AS-104-A",
-	"startTime":"2 PM CT",
-	"seatNumber":"",
-	"inPerson":[
-		"Monday",
-		"Wednesday"
-	],
-	"virtual":[
-		"Friday"
-	]
-}
-
-app.get('/batman', (request, response) => {
-	console.log('Calling "/batman" on the Node.js server.')
-	response.type('application/json')
-	response.send(JSON.stringify(batMan))
-})
-
-// Load your JSON data
-const favoritePlaces = require('./FavoritePlaces.json');
-
-// Create a route that serves the JSON data
-app.get('/api/favorite-places', (req, res) => {
-  res.json(favoritePlaces);
 });
-
-
 
 // Custom 404 page.
 app.use((request, response) => {
