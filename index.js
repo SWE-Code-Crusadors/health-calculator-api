@@ -153,7 +153,46 @@ app.get('/calculate',cors() ,(req, res) => {
     const bmi = weight / (height * height) * 703
     var points = 0
 
-    //age 
+    //error checking
+    const nums = [age, height, weight, sbp, dbp]
+    const numsNames = ['age','height','weight','sbp','dbp']
+    const errors = []
+
+    nums.forEach((value, index) => {
+      const parsedValue = parseFloat(value)
+      if (isNaN(parsedValue)) { 
+        const err = {}
+        err[numsNames[index]] = 'notANumber'
+        errors.push(err)
+      } else {
+        nums[index] = parsedValue
+      }})
+
+    const yns = [diabetes, cancer, alzheimers]
+    const ynsNames = ['diabetes','cancer','alzheimers']
+    yns.forEach((value, index) => {
+      if (value !== 'yes' && value !== 'no')  { 
+        const err = {}
+        err[ynsNames[index]] = 'notYesOrNo'
+        errors.push(err)
+}})
+
+    if (!errors.some(error => 'height' in error)){
+      if (height <= 24) {
+        errors.push({'height':'notOver24inches'})
+    }
+    }
+
+
+    //if there are any errors send the errors and stop
+
+    if (errors.length !== 0) {
+          res.json(errors)
+          return
+    }
+
+    //if there are no errors 
+    //age
     if (age < 30) {
       points = points + 0 
     } else if (age < 45) {
